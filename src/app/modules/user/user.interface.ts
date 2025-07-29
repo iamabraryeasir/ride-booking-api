@@ -3,7 +3,7 @@ import { Document, Types } from 'mongoose';
 export enum Role {
     ADMIN = 'ADMIN',
     RIDER = 'RIDER',
-    USER = 'USER',
+    DRIVER = 'DRIVER',
 }
 
 export interface IUser extends Document {

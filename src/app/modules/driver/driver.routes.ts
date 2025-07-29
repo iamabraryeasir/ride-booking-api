@@ -22,7 +22,7 @@ const router = Router();
 
 router.post(
     '/apply',
-    checkAuth(Role.USER),
+    checkAuth(Role.RIDER),
     validateRequest(applyForDriverZodValidator),
     DriverController.applyForDriver
 );
