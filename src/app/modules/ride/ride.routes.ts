@@ -20,6 +20,8 @@ import { RideController } from './ride.controller';
  */
 const router = Router();
 
+router.get('/my-rides', checkAuth(Role.RIDER), RideController.getMyRides);
+
 router.post(
     '/request-ride',
     checkAuth(Role.RIDER),

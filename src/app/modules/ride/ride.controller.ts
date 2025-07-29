@@ -48,7 +48,23 @@ const cancelRide = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
+/**
+ * Get my rides
+ */
+const getMyRides = catchAsync(async (req: Request, res: Response) => {
+    const rider = req.user.userId;
+
+    const rides = await RideService.getMyRides(rider);
+
+    sendResponse(res, {
+        statusCode: httpStatusCodes.OK,
+        message: 'Rides fetched successfully',
+        data: rides,
+    });
+});
+
 export const RideController = {
     requestRide,
     cancelRide,
+    getMyRides,
 };

@@ -62,4 +62,19 @@ const cancelRide = async (
     );
 };
 
-export const RideService = { requestRide, cancelRide };
+/**
+ * Get rides for a rider
+ */
+const getMyRides = async (riderId: string) => {
+    const rides = await Ride.find({ rider: new Types.ObjectId(riderId) })
+        .populate('rider', 'name email')
+        .populate('driver', 'name email');
+
+    if (!rides || rides.length === 0) {
+        throw new AppError(httpStatusCodes.NOT_FOUND, 'No rides found');
+    }
+
+    return rides;
+};
+
+export const RideService = { requestRide, cancelRide, getMyRides };
