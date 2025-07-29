@@ -10,6 +10,8 @@ import cors from 'cors';
  * Local Modules
  */
 import config from './app/config';
+import { globalErrorHandler } from './app/middlewares/globalErrorHandler.middleware';
+import { routeNotFound } from './app/middlewares/routeNotFound.middleware';
 
 const app = express();
 
@@ -40,5 +42,15 @@ app.get('/', (req: Request, res: Response) => {
         message: 'Welcome to Abrar Ride Booking System API',
     });
 });
+
+/**
+ * Global Error Handler
+ */
+app.use(globalErrorHandler);
+
+/**
+ * Not Found Route
+ */
+app.use(routeNotFound);
 
 export default app;
