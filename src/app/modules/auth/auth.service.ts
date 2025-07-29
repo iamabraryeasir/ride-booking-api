@@ -3,8 +3,14 @@ import bcrypt from 'bcryptjs';
 import { AppError } from '../../errorHelpers/AppError';
 import { IUser } from '../users/user.interface';
 import { User } from '../users/user.model';
-import { createUserTokens } from '../../utils/userTokens';
+import {
+    createNewAccessTokenWithRefreshToken,
+    createUserTokens,
+} from '../../utils/userTokens';
 
+/**
+ * Login User
+ */
 const loginUser = async (payload: Partial<IUser>) => {
     const { email, password } = payload;
 
@@ -25,7 +31,12 @@ const loginUser = async (payload: Partial<IUser>) => {
 
     const userTokens = createUserTokens(isUserExist);
 
-    const { password: pass, ...rest } = isUserExist.toObject();
+    const {
+        password: pass,
+        isDeleted,
+        isBlocked,
+        ...rest
+    } = isUserExist.toObject();
 
     return {
         accessToken: userTokens.accessToken,
@@ -34,6 +45,18 @@ const loginUser = async (payload: Partial<IUser>) => {
     };
 };
 
+/**
+ * Get new access token from refresh token
+ */
+const getNewAccessToken = async (refreshToken: string) => {
+    const newAccessToken = await createNewAccessTokenWithRefreshToken(
+        refreshToken
+    );
+
+    return { accessToken: newAccessToken };
+};
+
 export const AuthServices = {
     loginUser,
+    getNewAccessToken,
 };

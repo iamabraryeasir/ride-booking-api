@@ -50,7 +50,7 @@ export const checkAuth =
                 );
             }
 
-            if (!isUserExists.isBlocked) {
+            if (isUserExists.isBlocked) {
                 throw new AppError(
                     httpStatusCodes.BAD_REQUEST,
                     'User is Blocked'
