@@ -49,6 +49,13 @@ const getAllDrivers = async () => {
  * Approve Driver Application
  */
 const approveDriverApplication = async (applicationId: string) => {
+    // Find the current suspension status
+    const driver = await Driver.findById(applicationId);
+    if (!driver) {
+        throw new AppError(httpStatusCodes.NOT_FOUND, 'Driver not found');
+    }
+
+    // update
     const updatedApplication = await Driver.findByIdAndUpdate(
         applicationId,
         {
@@ -67,6 +74,13 @@ const rejectDriverApplication = async (
     applicationId: string,
     rejectionReason: string
 ) => {
+    // Find the current suspension status
+    const driver = await Driver.findById(applicationId);
+    if (!driver) {
+        throw new AppError(httpStatusCodes.NOT_FOUND, 'Driver not found');
+    }
+
+    // update
     const updatedApplication = await Driver.findByIdAndUpdate(
         applicationId,
         {
@@ -79,9 +93,32 @@ const rejectDriverApplication = async (
     return updatedApplication;
 };
 
+/**
+ * Approve Driver Application
+ */
+const toggleSuspend = async (driverId: string) => {
+    // Find the current suspension status
+    const driver = await Driver.findById(driverId);
+    if (!driver) {
+        throw new AppError(httpStatusCodes.NOT_FOUND, 'Driver not found');
+    }
+
+    // Toggle the isSuspended field
+    const updatedApplication = await Driver.findByIdAndUpdate(
+        driverId,
+        {
+            isSuspended: !driver.isSuspended,
+        },
+        { runValidators: true, new: true }
+    ).populate('user', 'name email');
+
+    return updatedApplication;
+};
+
 export const DriverService = {
     applyForDriver,
     getAllDrivers,
     approveDriverApplication,
     rejectDriverApplication,
+    toggleSuspend,
 };

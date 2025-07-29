@@ -38,6 +38,10 @@ const driverSchema = new Schema<IDriver>(
             type: String,
             default: null,
         },
+        isSuspended: {
+            type: Boolean,
+            default: false,
+        },
         isOnline: {
             type: Boolean,
             default: true,

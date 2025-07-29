@@ -42,4 +42,10 @@ router.patch(
     DriverController.rejectDriverApplication
 );
 
+router.patch(
+    '/suspend-driver/:driverId',
+    checkAuth(Role.ADMIN),
+    DriverController.toggleSuspend
+);
+
 export const DriverRoutes = router;

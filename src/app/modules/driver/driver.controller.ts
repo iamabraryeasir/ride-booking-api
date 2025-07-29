@@ -93,9 +93,28 @@ const rejectDriverApplication = catchAsync(
     }
 );
 
+/**
+ * Reject Driver Application
+ */
+const toggleSuspend = catchAsync(async (req: Request, res: Response) => {
+    const { driverId } = req.params;
+
+    const driver = await DriverService.toggleSuspend(driverId);
+
+    sendResponse(res, {
+        statusCode: httpStatusCodes.OK,
+        message: `User is ${driver?.isSuspended ? 'Suspend' : 'Unsuspend'}`,
+        data: {
+            isSuspended: driver?.isSuspended,
+            user: driver?.user,
+        },
+    });
+});
+
 export const DriverController = {
     applyForDriver,
     getAllDrivers,
     approveDriverApplication,
     rejectDriverApplication,
+    toggleSuspend,
 };
