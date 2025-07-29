@@ -8,6 +8,7 @@ import httpStatusCodes from 'http-status-codes';
  * Local Modules
  */
 import { UserRoutes } from '../modules/users/user.routes';
+import { AuthRoutes } from '../modules/auth/auth.routes';
 
 /**
  * Types
@@ -26,6 +27,10 @@ const moduleRoutes: IModuleRoutes[] = [
     {
         path: '/users',
         route: UserRoutes,
+    },
+    {
+        path: '/auth',
+        route: AuthRoutes,
     },
 ];
 
