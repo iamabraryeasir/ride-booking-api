@@ -9,6 +9,7 @@ import httpStatusCodes from 'http-status-codes';
  */
 import { UserRoutes } from '../modules/user/user.routes';
 import { AuthRoutes } from '../modules/auth/auth.routes';
+import { DriverRoutes } from '../modules/driver/driver.routes';
 
 /**
  * Types
@@ -25,12 +26,16 @@ const router = Router();
  */
 const moduleRoutes: IModuleRoutes[] = [
     {
+        path: '/auth',
+        route: AuthRoutes,
+    },
+    {
         path: '/users',
         route: UserRoutes,
     },
     {
-        path: '/auth',
-        route: AuthRoutes,
+        path: '/drivers',
+        route: DriverRoutes,
     },
 ];
 
