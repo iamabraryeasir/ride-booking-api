@@ -40,14 +40,62 @@ const applyForDriver = catchAsync(async (req: Request, res: Response) => {
 /**
  * Get All Pending Drivers
  */
-const getAllPendingDrivers = catchAsync(async (req: Request, res: Response) => {
-    const pendingDrivers = await DriverService.getAllPendingDrivers();
+const getAllDrivers = catchAsync(async (req: Request, res: Response) => {
+    const drivers = await DriverService.getAllDrivers();
 
     sendResponse(res, {
         statusCode: httpStatusCodes.OK,
-        message: 'All Pending Drivers Fetched Successfully',
-        data: pendingDrivers,
+        message: 'All Drivers Fetched Successfully',
+        data: drivers,
     });
 });
 
-export const DriverController = { applyForDriver, getAllPendingDrivers };
+/**
+ * Approve Driver Application
+ */
+const approveDriverApplication = catchAsync(
+    async (req: Request, res: Response) => {
+        const { applicationId } = req.params;
+
+        const approvedDriver = await DriverService.approveDriverApplication(
+            applicationId
+        );
+
+        sendResponse(res, {
+            statusCode: httpStatusCodes.OK,
+            message: 'Driver request is approved',
+            data: approvedDriver?.user,
+        });
+    }
+);
+
+/**
+ * Reject Driver Application
+ */
+const rejectDriverApplication = catchAsync(
+    async (req: Request, res: Response) => {
+        const { applicationId } = req.params;
+        const { rejectionReason } = req.body;
+
+        const rejectedDriver = await DriverService.rejectDriverApplication(
+            applicationId,
+            rejectionReason
+        );
+
+        sendResponse(res, {
+            statusCode: httpStatusCodes.OK,
+            message: 'Driver request is rejected',
+            data: {
+                rejectionReason: rejectedDriver?.rejectionReason,
+                user: rejectedDriver?.user,
+            },
+        });
+    }
+);
+
+export const DriverController = {
+    applyForDriver,
+    getAllDrivers,
+    approveDriverApplication,
+    rejectDriverApplication,
+};

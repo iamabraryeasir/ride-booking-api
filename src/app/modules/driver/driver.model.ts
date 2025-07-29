@@ -17,11 +17,18 @@ const driverSchema = new Schema<IDriver>(
             type: Schema.Types.ObjectId,
             ref: 'User',
             required: true,
+        },
+        vehicleNumber: {
+            type: String,
+            trim: true,
             unique: true,
         },
-        vehicleNumber: String,
         vehicleModel: String,
-        licenseNumber: String,
+        licenseNumber: {
+            type: String,
+            trim: true,
+            unique: true,
+        },
         applicationStatus: {
             type: String,
             enum: Object.values(APPLICATION_STATUS),

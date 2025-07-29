@@ -15,10 +15,18 @@ import { Driver } from './driver.model';
  */
 const applyForDriver = async (payload: Partial<IDriver>) => {
     const existingDriver = await Driver.findOne({ user: payload.user });
-    if (existingDriver) {
+
+    if (existingDriver?.applicationStatus === APPLICATION_STATUS.PENDING) {
         throw new AppError(
             httpStatusCodes.BAD_REQUEST,
             'You have already applied to become a driver'
+        );
+    }
+
+    if (existingDriver?.applicationStatus === APPLICATION_STATUS.APPROVED) {
+        throw new AppError(
+            httpStatusCodes.BAD_REQUEST,
+            'You are already a driver'
         );
     }
 
@@ -29,14 +37,51 @@ const applyForDriver = async (payload: Partial<IDriver>) => {
 /**
  * Get All Pending Drivers
  */
-const getAllPendingDrivers = async () => {
-    const allPendingDrivers = await Driver.find({
-        applicationStatus: APPLICATION_STATUS.PENDING,
-    })
+const getAllDrivers = async () => {
+    const allPendingDrivers = await Driver.find({})
         .populate('user', 'name email picture')
         .select('-createdAt -updatedAt -earnings -isOnline -rejectionReason');
 
     return allPendingDrivers;
 };
 
-export const DriverService = { applyForDriver, getAllPendingDrivers };
+/**
+ * Approve Driver Application
+ */
+const approveDriverApplication = async (applicationId: string) => {
+    const updatedApplication = await Driver.findByIdAndUpdate(
+        applicationId,
+        {
+            applicationStatus: APPLICATION_STATUS.APPROVED,
+        },
+        { runValidators: true, new: true }
+    ).populate('user', 'name email');
+
+    return updatedApplication;
+};
+
+/**
+ * Approve Driver Application
+ */
+const rejectDriverApplication = async (
+    applicationId: string,
+    rejectionReason: string
+) => {
+    const updatedApplication = await Driver.findByIdAndUpdate(
+        applicationId,
+        {
+            rejectionReason,
+            applicationStatus: APPLICATION_STATUS.REJECTED,
+        },
+        { runValidators: true, new: true }
+    ).populate('user', 'name email');
+
+    return updatedApplication;
+};
+
+export const DriverService = {
+    applyForDriver,
+    getAllDrivers,
+    approveDriverApplication,
+    rejectDriverApplication,
+};

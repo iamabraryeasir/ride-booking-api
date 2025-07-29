@@ -13,3 +13,7 @@ export const applyForDriverZodValidator = z.object({
         .string('License number is required')
         .min(6, 'License number must be at least 6 characters'),
 });
+
+export const rejectedDriverApplicationZodValidator = z.object({
+    rejectionReason: z.string().min(10),
+});

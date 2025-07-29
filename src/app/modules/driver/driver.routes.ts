@@ -8,7 +8,10 @@ import { Router } from 'express';
  */
 import { DriverController } from './driver.controller';
 import { validateRequest } from '../../middlewares/validateRequest.middleware';
-import { applyForDriverZodValidator } from './driver.validator';
+import {
+    applyForDriverZodValidator,
+    rejectedDriverApplicationZodValidator,
+} from './driver.validator';
 import { checkAuth } from '../../middlewares/checkAuth.middleware';
 import { Role } from '../user/user.interface';
 
@@ -24,10 +27,19 @@ router.post(
     DriverController.applyForDriver
 );
 
-router.get(
-    '/pending-drivers',
+router.get('/', checkAuth(Role.ADMIN), DriverController.getAllDrivers);
+
+router.patch(
+    '/approve-driver/:applicationId',
     checkAuth(Role.ADMIN),
-    DriverController.getAllPendingDrivers
+    DriverController.approveDriverApplication
+);
+
+router.patch(
+    '/reject-driver/:applicationId',
+    checkAuth(Role.ADMIN),
+    validateRequest(rejectedDriverApplicationZodValidator),
+    DriverController.rejectDriverApplication
 );
 
 export const DriverRoutes = router;
