@@ -24,4 +24,10 @@ router.post(
     RideController.requestRide
 );
 
+router.patch(
+    '/cancel-ride/:rideId',
+    checkAuth(Role.RIDER),
+    RideController.cancelRide
+);
+
 export const RideRoutes = router;

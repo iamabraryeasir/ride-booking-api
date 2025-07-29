@@ -1,9 +1,19 @@
+/**
+ * Node Modules
+ */
 import { Request, Response } from 'express';
 import httpStatusCodes from 'http-status-codes';
+
+/**
+ * Local Modules
+ */
 import { catchAsync } from '../../utils/catchAsync';
 import { sendResponse } from '../../utils/sendResponse';
 import { RideService } from './ride.service';
 
+/**
+ * Request a ride
+ */
 const requestRide = catchAsync(async (req: Request, res: Response) => {
     const rider = req.user.userId;
 
@@ -21,6 +31,23 @@ const requestRide = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
+/**
+ * Cancel a ride
+ */
+const cancelRide = catchAsync(async (req: Request, res: Response) => {
+    const { rideId } = req.params;
+    const rider = req.user.userId;
+
+    await RideService.cancelRide(rideId, rider);
+
+    sendResponse(res, {
+        statusCode: httpStatusCodes.OK,
+        message: 'Ride cancelled successfully',
+        data: null,
+    });
+});
+
 export const RideController = {
     requestRide,
+    cancelRide,
 };
