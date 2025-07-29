@@ -9,7 +9,10 @@ import { Router } from 'express';
 import { checkAuth } from '../../middlewares/checkAuth.middleware';
 import { Role } from '../user/user.interface';
 import { validateRequest } from '../../middlewares/validateRequest.middleware';
-import { rideRequestZodValidator } from './ride.validator';
+import {
+    rideCancelZodValidator,
+    rideRequestZodValidator,
+} from './ride.validator';
 import { RideController } from './ride.controller';
 
 /**
@@ -26,7 +29,8 @@ router.post(
 
 router.patch(
     '/cancel-ride/:rideId',
-    checkAuth(Role.RIDER),
+    checkAuth(Role.RIDER, Role.DRIVER),
+    validateRequest(rideCancelZodValidator),
     RideController.cancelRide
 );
 

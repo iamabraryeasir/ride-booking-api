@@ -30,7 +30,11 @@ const requestRide = async (rideData: Partial<IRide>) => {
 /**
  * Cancel a ride
  */
-const cancelRide = async (rideId: string, riderId: string) => {
+const cancelRide = async (
+    rideId: string,
+    riderId: string,
+    cancelReason: string
+) => {
     const ride = await Ride.findOne({ _id: rideId, rider: riderId });
 
     if (!ride) {
@@ -44,9 +48,16 @@ const cancelRide = async (rideId: string, riderId: string) => {
         );
     }
 
+    if (ride.status === RideStatus.ACCEPTED) {
+        throw new AppError(
+            httpStatusCodes.BAD_REQUEST,
+            'Ride cannot be canceled after being accepted by a driver'
+        );
+    }
+
     await Ride.findByIdAndUpdate(
         rideId,
-        { status: RideStatus.CANCELLED },
+        { status: RideStatus.CANCELLED, cancelReason },
         { new: true, runValidators: true }
     );
 };

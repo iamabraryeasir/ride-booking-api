@@ -37,8 +37,9 @@ const requestRide = catchAsync(async (req: Request, res: Response) => {
 const cancelRide = catchAsync(async (req: Request, res: Response) => {
     const { rideId } = req.params;
     const rider = req.user.userId;
+    const cancelReason = req.body.cancelReason;
 
-    await RideService.cancelRide(rideId, rider);
+    await RideService.cancelRide(rideId, rider, cancelReason);
 
     sendResponse(res, {
         statusCode: httpStatusCodes.OK,

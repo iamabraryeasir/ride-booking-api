@@ -5,3 +5,7 @@ export const rideRequestZodValidator = z.object({
     destinationAddress: z.string().min(1, 'Destination address is required'),
     price: z.number().positive('Price must be a positive number'),
 });
+
+export const rideCancelZodValidator = z.object({
+    cancelReason: z.string().min(1, 'Cancel reason is required'),
+});
