@@ -8,10 +8,10 @@ import httpStatusCodes from 'http-status-codes';
  * Local Modules
  */
 import config from '../config';
-import { User } from '../modules/users/user.model';
+import { User } from '../modules/user/user.model';
 import { AppError } from '../errorHelpers/AppError';
 import { generateJwtToken, verifyJwtToken } from './jwt';
-import { IUser } from '../modules/users/user.interface';
+import { IUser } from '../modules/user/user.interface';
 
 /**
  * Function for creating access and refresh token in the login

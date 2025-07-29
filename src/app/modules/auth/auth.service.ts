@@ -1,8 +1,8 @@
 import httpStatusCodes from 'http-status-codes';
 import bcrypt from 'bcryptjs';
 import { AppError } from '../../errorHelpers/AppError';
-import { IUser } from '../users/user.interface';
-import { User } from '../users/user.model';
+import { IUser } from '../user/user.interface';
+import { User } from '../user/user.model';
 import {
     createNewAccessTokenWithRefreshToken,
     createUserTokens,

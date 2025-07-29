@@ -7,7 +7,7 @@ import httpStatusCodes from 'http-status-codes';
 /**
  * Local Modules
  */
-import { UserRoutes } from '../modules/users/user.routes';
+import { UserRoutes } from '../modules/user/user.routes';
 import { AuthRoutes } from '../modules/auth/auth.routes';
 
 /**

@@ -1,7 +1,7 @@
 import bcryptjs from 'bcryptjs';
 import config from '../config';
-import { Role } from '../modules/users/user.interface';
-import { User } from '../modules/users/user.model';
+import { Role } from '../modules/user/user.interface';
+import { User } from '../modules/user/user.model';
 
 /* eslint-disable no-console */
 export const seedAdmin = async () => {

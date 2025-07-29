@@ -11,8 +11,8 @@ import { NextFunction, Request, Response } from 'express';
 import config from '../config';
 import { verifyJwtToken } from '../utils/jwt';
 import { AppError } from '../errorHelpers/AppError';
-import { Role } from '../modules/users/user.interface';
-import { User } from '../modules/users/user.model';
+import { Role } from '../modules/user/user.interface';
+import { User } from '../modules/user/user.model';
 
 /**
  * Main Middleware Logic
