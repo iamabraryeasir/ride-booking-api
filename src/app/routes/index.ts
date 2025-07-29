@@ -10,6 +10,7 @@ import httpStatusCodes from 'http-status-codes';
 import { UserRoutes } from '../modules/user/user.routes';
 import { AuthRoutes } from '../modules/auth/auth.routes';
 import { DriverRoutes } from '../modules/driver/driver.routes';
+import { RideRoutes } from '../modules/ride/ride.routes';
 
 /**
  * Types
@@ -36,6 +37,10 @@ const moduleRoutes: IModuleRoutes[] = [
     {
         path: '/drivers',
         route: DriverRoutes,
+    },
+    {
+        path: '/rides',
+        route: RideRoutes,
     },
 ];
 
