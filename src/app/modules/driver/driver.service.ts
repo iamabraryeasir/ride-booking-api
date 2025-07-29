@@ -9,12 +9,19 @@ import httpStatusCodes from 'http-status-codes';
 import { AppError } from '../../errorHelpers/AppError';
 import { APPLICATION_STATUS, IDriver } from './driver.interface';
 import { Driver } from './driver.model';
+import { IUser } from '../user/user.interface';
 
 /**
  * Apply To Become a Driver
  */
 const applyForDriver = async (payload: Partial<IDriver>) => {
-    const existingDriver = await Driver.findOne({ user: payload.user });
+    const existingDriver = await Driver.findOne({
+        user: payload.user,
+    }).populate('user');
+
+    if ((existingDriver?.user as unknown as IUser)?.isBlocked) {
+        throw new AppError(httpStatusCodes.FORBIDDEN, 'The user is blocked');
+    }
 
     if (existingDriver?.applicationStatus === APPLICATION_STATUS.PENDING) {
         throw new AppError(

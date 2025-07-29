@@ -37,4 +37,19 @@ const registerUser = async (payload: Partial<IUser>) => {
     return newUser;
 };
 
-export const UserServices = { registerUser };
+/**
+ * Toggle User Block
+ */
+const toggleUserBock = async (userId: string) => {
+    const user = await User.findById(userId);
+    if (!user) {
+        throw new AppError(httpStatusCodes.NOT_FOUND, 'User not found');
+    }
+
+    user.isBlocked = !user.isBlocked;
+    await user.save();
+
+    return user;
+};
+
+export const UserServices = { registerUser, toggleUserBock };

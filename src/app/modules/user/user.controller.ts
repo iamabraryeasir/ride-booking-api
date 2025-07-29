@@ -16,10 +16,8 @@ import { UserServices } from './user.service';
  */
 const registerUser = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
-        console.log('Register user called');
         const user = await UserServices.registerUser(req.body);
-        console.log('User registered:', user);
-        
+
         sendResponse(res, {
             statusCode: httpStatusCodes.CREATED,
             message: 'User created successful',
@@ -31,6 +29,27 @@ const registerUser = catchAsync(
     }
 );
 
+/**
+ * Toggle User Block
+ */
+const toggleUserBlock = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+        const { userId } = req.params;
+        const user = await UserServices.toggleUserBock(userId);
+
+        sendResponse(res, {
+            statusCode: httpStatusCodes.CREATED,
+            message: `User is ${user.isBlocked ? 'Blocked' : 'Unblocked'}`,
+            data: {
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+            },
+        });
+    }
+);
+
 export const UserController = {
     registerUser,
+    toggleUserBlock,
 };
