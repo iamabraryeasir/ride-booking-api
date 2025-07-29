@@ -9,6 +9,7 @@ import mongoose from 'mongoose';
  */
 import app from './app';
 import config from './app/config';
+import { seedAdmin } from './app/utils/seedAdmin';
 
 let server: Server;
 
@@ -34,6 +35,7 @@ async function startServer() {
  */
 (async () => {
     await startServer();
+    await seedAdmin();
 })();
 
 /**

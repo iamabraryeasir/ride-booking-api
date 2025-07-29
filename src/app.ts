@@ -1,10 +1,9 @@
 /**
  * Node Modules
  */
-import cookieParser from 'cookie-parser';
-import httpStatusCodes from 'http-status-codes';
-import express, { Request, Response } from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import express from 'express';
 
 /**
  * Local Modules
@@ -12,6 +11,7 @@ import cors from 'cors';
 import config from './app/config';
 import { globalErrorHandler } from './app/middlewares/globalErrorHandler.middleware';
 import { routeNotFound } from './app/middlewares/routeNotFound.middleware';
+import { AppRouter } from './app/routes';
 
 const app = express();
 
@@ -34,14 +34,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 /**
- * Home Route
+ * Main Routes
  */
-app.get('/', (req: Request, res: Response) => {
-    res.status(httpStatusCodes.OK).json({
-        success: true,
-        message: 'Welcome to Abrar Ride Booking System API',
-    });
-});
+app.use('/api/v1', AppRouter);
 
 /**
  * Global Error Handler
