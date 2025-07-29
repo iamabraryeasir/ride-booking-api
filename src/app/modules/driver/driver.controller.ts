@@ -37,4 +37,17 @@ const applyForDriver = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
-export const DriverController = { applyForDriver };
+/**
+ * Get All Pending Drivers
+ */
+const getAllPendingDrivers = catchAsync(async (req: Request, res: Response) => {
+    const pendingDrivers = await DriverService.getAllPendingDrivers();
+
+    sendResponse(res, {
+        statusCode: httpStatusCodes.OK,
+        message: 'All Pending Drivers Fetched Successfully',
+        data: pendingDrivers,
+    });
+});
+
+export const DriverController = { applyForDriver, getAllPendingDrivers };

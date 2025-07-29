@@ -24,4 +24,10 @@ router.post(
     DriverController.applyForDriver
 );
 
+router.get(
+    '/pending-drivers',
+    checkAuth(Role.ADMIN),
+    DriverController.getAllPendingDrivers
+);
+
 export const DriverRoutes = router;
