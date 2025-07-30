@@ -21,13 +21,13 @@ const driverSchema = new Schema<IDriver>(
         vehicleNumber: {
             type: String,
             trim: true,
-            unique: true,
+            unique: [true, 'Vehicle number is already in use'],
         },
         vehicleModel: String,
         licenseNumber: {
             type: String,
             trim: true,
-            unique: true,
+            unique: [true, 'License number is already in use'],
         },
         applicationStatus: {
             type: String,

@@ -12,7 +12,6 @@ export interface IDriver extends Document {
     vehicleModel: string;
     licenseNumber: string;
     isSuspended?: boolean;
-    isApproved?: boolean;
     isOnline?: boolean;
     earnings?: number;
     applicationStatus?: APPLICATION_STATUS;
