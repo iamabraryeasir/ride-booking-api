@@ -35,7 +35,7 @@ const registerUser = catchAsync(
 const toggleUserBlock = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
         const { userId } = req.params;
-        const user = await UserServices.toggleUserBock(userId);
+        const user = await UserServices.toggleUserBlock(userId);
 
         sendResponse(res, {
             statusCode: httpStatusCodes.CREATED,
@@ -49,7 +49,23 @@ const toggleUserBlock = catchAsync(
     }
 );
 
+/**
+ * Get All Users
+ */
+const getAllUsers = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+        const users = await UserServices.getAllUsers();
+
+        sendResponse(res, {
+            statusCode: httpStatusCodes.OK,
+            message: 'Users retrieved successfully',
+            data: users,
+        });
+    }
+);
+
 export const UserController = {
     registerUser,
     toggleUserBlock,
+    getAllUsers,
 };

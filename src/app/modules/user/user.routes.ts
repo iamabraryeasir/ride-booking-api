@@ -25,4 +25,6 @@ router.patch(
     UserController.toggleUserBlock
 );
 
+router.get('/', checkAuth(ROLE.ADMIN), UserController.getAllUsers);
+
 export const UserRoutes = router;

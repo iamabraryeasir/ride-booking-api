@@ -40,7 +40,7 @@ const registerUser = async (payload: Partial<IUser>) => {
 /**
  * Toggle User Block
  */
-const toggleUserBock = async (userId: string) => {
+const toggleUserBlock = async (userId: string) => {
     const user = await User.findById(userId);
     if (!user) {
         throw new AppError(httpStatusCodes.NOT_FOUND, 'User not found');
@@ -52,4 +52,16 @@ const toggleUserBock = async (userId: string) => {
     return user;
 };
 
-export const UserServices = { registerUser, toggleUserBock };
+/**
+ * Get All Users
+ */
+const getAllUsers = async () => {
+    const users = await User.find({}).select('-password');
+    if (!users.length) {
+        throw new AppError(httpStatusCodes.NOT_FOUND, 'No users found');
+    }
+
+    return users;
+};
+
+export const UserServices = { registerUser, toggleUserBlock, getAllUsers };
