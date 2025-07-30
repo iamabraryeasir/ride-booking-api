@@ -10,6 +10,7 @@ import { Ride } from './ride.model';
 import { User } from '../user/user.model';
 import { AppError } from '../../errorHelpers/AppError';
 import { RIDE_STATUS } from './ride.interface';
+import { Driver } from '../driver/driver.model';
 
 /**
  * Get All Rides
@@ -99,9 +100,46 @@ const cancelRideRider = async (
     return ride.populate('rider', 'name email');
 };
 
+/**
+ * Accept Ride
+ */
+const acceptRide = async (rideId: string, userId: string) => {
+    const driver = await Driver.findOne({ user: userId });
+    if (!driver) {
+        throw new AppError(httpStatusCodes.NOT_FOUND, 'Driver not found');
+    }
+
+    if (!driver.isOnline) {
+        throw new AppError(
+            httpStatusCodes.BAD_REQUEST,
+            'Driver is not available to accept rides'
+        );
+    }
+
+    const ride = await Ride.findById(rideId);
+    if (!ride) {
+        throw new AppError(httpStatusCodes.NOT_FOUND, 'Ride not found');
+    }
+
+    if (ride.status !== RIDE_STATUS.REQUESTED) {
+        throw new AppError(
+            httpStatusCodes.BAD_REQUEST,
+            'Ride is not available for acceptance'
+        );
+    }
+
+    ride.status = RIDE_STATUS.ACCEPTED;
+    ride.driver = driver._id;
+    ride.timestamps.acceptedAt = new Date();
+    await ride.save();
+
+    return ride.populate('driver', 'user');
+};
+
 export const RideService = {
     getAllRides,
     requestRide,
     getMyRides,
     cancelRideRider,
+    acceptRide,
 };

@@ -38,4 +38,10 @@ router.patch(
     RideController.cancelRideRider
 );
 
+router.patch(
+    '/accept/:rideId',
+    checkAuth(ROLE.DRIVER),
+    RideController.acceptRide
+);
+
 export const RideRoutes = router;

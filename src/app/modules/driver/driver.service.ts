@@ -11,6 +11,8 @@ import { APPLICATION_STATUS, IDriver } from './driver.interface';
 import { Driver } from './driver.model';
 import { User } from '../user/user.model';
 import { ROLE } from '../user/user.interface';
+import { Ride } from '../ride/ride.model';
+import { RIDE_STATUS } from '../ride/ride.interface';
 
 /**
  * Get All Drivers
