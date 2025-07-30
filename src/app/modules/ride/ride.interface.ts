@@ -24,4 +24,9 @@ export interface IRide extends Document {
         cancelledAt?: Date;
     };
     cancelReason?: string;
+    rejectionDriverList?: {
+        driverId: Types.ObjectId;
+        reason: string;
+        timestamp: Date;
+    }[];
 }

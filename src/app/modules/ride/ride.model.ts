@@ -30,7 +30,13 @@ const rideSchema = new Schema<IRide>(
             completedAt: { type: Date },
             cancelledAt: { type: Date },
         },
-        cancelReason: { type: String },
+        rejectionDriverList: [
+            {
+                driverId: { type: Schema.Types.ObjectId, ref: 'Driver' },
+                reason: { type: String },
+                timestamp: { type: Date, default: Date.now },
+            },
+        ],
     },
     {
         timestamps: true,

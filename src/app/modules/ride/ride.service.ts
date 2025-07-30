@@ -136,10 +136,42 @@ const acceptRide = async (rideId: string, userId: string) => {
     return ride.populate('driver', 'user');
 };
 
+/**
+ * Reject Ride
+ */
+const rejectRide = async (rideId: string, userId: string, reason: string) => {
+    const driver = await Driver.findOne({ user: userId });
+    if (!driver) {
+        throw new AppError(httpStatusCodes.NOT_FOUND, 'Driver not found');
+    }
+
+    const ride = await Ride.findById(rideId);
+    if (!ride) {
+        throw new AppError(httpStatusCodes.NOT_FOUND, 'Ride not found');
+    }
+
+    if (ride.status !== RIDE_STATUS.REQUESTED) {
+        throw new AppError(
+            httpStatusCodes.BAD_REQUEST,
+            'Ride is not available for rejection'
+        );
+    }
+
+    ride.rejectionDriverList?.push({
+        driverId: driver._id,
+        reason,
+        timestamp: new Date(),
+    });
+    await ride.save();
+
+    return ride.populate('driver', 'user');
+};
+
 export const RideService = {
     getAllRides,
     requestRide,
     getMyRides,
     cancelRideRider,
     acceptRide,
+    rejectRide,
 };

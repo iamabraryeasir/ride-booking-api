@@ -44,4 +44,10 @@ router.patch(
     RideController.acceptRide
 );
 
+router.patch(
+    '/reject/:rideId',
+    checkAuth(ROLE.DRIVER),
+    RideController.rejectRide
+);
+
 export const RideRoutes = router;

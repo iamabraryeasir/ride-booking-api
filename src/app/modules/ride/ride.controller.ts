@@ -79,9 +79,6 @@ const cancelRideRider = catchAsync(async (req: Request, res: Response) => {
 /**
  * Accept Ride
  */
-/**
- * Accept Ride
- */
 const acceptRide = catchAsync(async (req: Request, res: Response) => {
     const { rideId } = req.params;
     const userId = req.user.userId;
@@ -95,10 +92,28 @@ const acceptRide = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
+/**
+ * Reject Ride
+ */
+const rejectRide = catchAsync(async (req: Request, res: Response) => {
+    const { rideId } = req.params;
+    const userId = req.user.userId;
+    const { reason } = req.body;
+
+    const ride = await RideService.rejectRide(rideId, userId, reason);
+
+    sendResponse(res, {
+        statusCode: httpStatusCodes.OK,
+        message: 'Ride rejected successfully',
+        data: ride,
+    });
+});
+
 export const RideController = {
     getAllRides,
     requestRide,
     getMyRides,
     cancelRideRider,
     acceptRide,
+    rejectRide,
 };
