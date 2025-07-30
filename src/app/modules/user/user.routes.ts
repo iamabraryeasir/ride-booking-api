@@ -6,7 +6,7 @@ import { UserController } from './user.controller';
 import { validateRequest } from '../../middlewares/validateRequest.middleware';
 import { registerUserZodSchema } from './user.validation';
 import { checkAuth } from '../../middlewares/checkAuth.middleware';
-import { Role } from './user.interface';
+import { ROLE } from './user.interface';
 
 /**
  * All Routes
@@ -21,7 +21,7 @@ router.post(
 
 router.patch(
     '/toggle-block/:userId',
-    checkAuth(Role.ADMIN),
+    checkAuth(ROLE.ADMIN),
     UserController.toggleUserBlock
 );
 

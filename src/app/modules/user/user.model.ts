@@ -6,7 +6,7 @@ import { model, Schema } from 'mongoose';
 /**
  * Local Modules
  */
-import { IUser, Role } from './user.interface';
+import { IUser, ROLE } from './user.interface';
 
 /**
  * Schema
@@ -26,17 +26,20 @@ const userSchema = new Schema<IUser>(
         },
         password: {
             type: String,
+            required: true,
+            trim: true,
         },
         role: {
             type: String,
-            enum: Object.values(Role),
-            default: Role.RIDER,
-        },
-        phone: {
-            type: String,
+            enum: Object.values(ROLE),
+            default: ROLE.RIDER,
         },
         picture: {
             type: String,
+        },
+        phone: {
+            type: String,
+            unique: true,
         },
         isBlocked: {
             type: Boolean,

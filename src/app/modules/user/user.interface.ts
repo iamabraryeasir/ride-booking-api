@@ -1,6 +1,6 @@
-import { Document, Types } from 'mongoose';
+import { Document } from 'mongoose';
 
-export enum Role {
+export enum ROLE {
     ADMIN = 'ADMIN',
     RIDER = 'RIDER',
     DRIVER = 'DRIVER',
@@ -10,7 +10,7 @@ export interface IUser extends Document {
     name: string;
     email: string;
     password: string;
-    role: Role;
+    role: ROLE;
     picture?: string;
     phone?: string;
     isBlocked?: boolean;

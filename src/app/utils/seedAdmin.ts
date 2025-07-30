@@ -1,6 +1,6 @@
 import bcryptjs from 'bcryptjs';
 import config from '../config';
-import { Role } from '../modules/user/user.interface';
+import { ROLE } from '../modules/user/user.interface';
 import { User } from '../modules/user/user.model';
 
 /* eslint-disable no-console */
@@ -8,7 +8,7 @@ export const seedAdmin = async () => {
     try {
         const isSuperAdminExists = await User.findOne({
             email: config.ADMIN_EMAIL,
-            role: Role.ADMIN,
+            role: ROLE.ADMIN,
         });
 
         if (isSuperAdminExists) {
@@ -24,7 +24,7 @@ export const seedAdmin = async () => {
 
         await User.create({
             name: 'Abrar Yeasir Admin',
-            role: Role.ADMIN,
+            role: ROLE.ADMIN,
             email: config.ADMIN_EMAIL,
             password: hashedPassword,
         });

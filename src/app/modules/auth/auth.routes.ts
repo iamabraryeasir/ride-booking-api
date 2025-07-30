@@ -8,7 +8,7 @@ import { Router } from 'express';
  */
 import { AuthController } from './auth.controller';
 import { checkAuth } from '../../middlewares/checkAuth.middleware';
-import { Role } from '../user/user.interface';
+import { ROLE } from '../user/user.interface';
 
 /**
  * Routes

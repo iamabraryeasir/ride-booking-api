@@ -11,14 +11,14 @@ import { NextFunction, Request, Response } from 'express';
 import config from '../config';
 import { verifyJwtToken } from '../utils/jwt';
 import { AppError } from '../errorHelpers/AppError';
-import { Role } from '../modules/user/user.interface';
+import { ROLE } from '../modules/user/user.interface';
 import { User } from '../modules/user/user.model';
 
 /**
  * Main Middleware Logic
  */
 export const checkAuth =
-    (...authRoles: Role[]) =>
+    (...authROLEs: ROLE[]) =>
     async (req: Request, res: Response, next: NextFunction) => {
         try {
             const accessToken = req.headers.authorization;
@@ -57,7 +57,7 @@ export const checkAuth =
                 );
             }
 
-            if (!authRoles.includes(verifiedToken.role)) {
+            if (!authROLEs.includes(verifiedToken.role)) {
                 throw new AppError(
                     401,
                     'You are not permitted to view the route'
