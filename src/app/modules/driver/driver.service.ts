@@ -133,6 +133,29 @@ const toggleDriverAvailability = async (userId: string) => {
     return driver.isOnline;
 };
 
+/**
+ * Get Driver Earnings
+ */
+const getDriverEarnings = async (userId: string) => {
+    const driver = await Driver.findOne({ user: userId });
+    if (!driver) {
+        throw new AppError(httpStatusCodes.NOT_FOUND, 'Driver not found');
+    }
+
+    if (driver.applicationStatus !== APPLICATION_STATUS.APPROVED) {
+        throw new Error('Driver must be approved to view earnings');
+    }
+
+    const rides = await Ride.find({
+        driver: driver._id,
+        status: RIDE_STATUS.COMPLETED,
+    });
+
+    const totalEarnings = rides.reduce((total, ride) => total + ride.price, 0);
+
+    return { rides, totalEarnings };
+};
+
 export const DriverService = {
     getAllDrivers,
     applyForDriver,
@@ -140,4 +163,5 @@ export const DriverService = {
     rejectDriver,
     toggleDriverSuspension,
     toggleDriverAvailability,
+    getDriverEarnings,
 };

@@ -113,6 +113,20 @@ const toggleDriverAvailability = catchAsync(
     }
 );
 
+/**
+ * Get Driver Earnings
+ */
+const getDriverEarnings = catchAsync(async (req: Request, res: Response) => {
+    const userId = req.user.userId;
+    const data = await DriverService.getDriverEarnings(userId);
+
+    sendResponse(res, {
+        statusCode: httpStatusCodes.OK,
+        message: 'Driver earnings fetched successfully',
+        data,
+    });
+});
+
 export const DriverController = {
     getAllDrivers,
     applyForDriver,
@@ -120,4 +134,5 @@ export const DriverController = {
     rejectDriver,
     toggleDriverSuspension,
     toggleDriverAvailability,
+    getDriverEarnings,
 };
