@@ -13,6 +13,7 @@ import { validateRequest } from '../../middlewares/validateRequest.middleware';
 import {
     rideCancelZodValidator,
     rideRequestZodValidator,
+    updateRideStatusZodValidator,
 } from './ride.validator';
 
 /**
@@ -48,6 +49,13 @@ router.patch(
     '/reject/:rideId',
     checkAuth(ROLE.DRIVER),
     RideController.rejectRide
+);
+
+router.patch(
+    '/update-ride-status/:rideId',
+    checkAuth(ROLE.DRIVER),
+    validateRequest(updateRideStatusZodValidator),
+    RideController.updateRideStatus
 );
 
 export const RideRoutes = router;

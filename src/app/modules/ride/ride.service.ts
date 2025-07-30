@@ -167,6 +167,55 @@ const rejectRide = async (rideId: string, userId: string, reason: string) => {
     return ride.populate('driver', 'user');
 };
 
+/**
+ * Update Ride Status
+ */
+const updateRideStatus = async (
+    rideId: string,
+    userId: string,
+    status: RIDE_STATUS
+) => {
+    const ride = await Ride.findById(rideId);
+    if (!ride) {
+        throw new AppError(httpStatusCodes.NOT_FOUND, 'Ride not found');
+    }
+
+    if (
+        ride.status === RIDE_STATUS.COMPLETED ||
+        ride.status === RIDE_STATUS.CANCELLED
+    ) {
+        throw new AppError(
+            httpStatusCodes.BAD_REQUEST,
+            'Ride has already been completed or cancelled'
+        );
+    }
+
+    if (ride.status === RIDE_STATUS.REQUESTED) {
+        throw new AppError(
+            httpStatusCodes.BAD_REQUEST,
+            'Ride must be accepted before updating status'
+        );
+    }
+
+    if (ride.driver?.toString() !== userId) {
+        throw new AppError(
+            httpStatusCodes.FORBIDDEN,
+            'You can only update your own rides'
+        );
+    }
+
+    if (status === RIDE_STATUS.PICKED_UP) {
+        ride.timestamps.pickedUpAt = new Date();
+    } else if (status === RIDE_STATUS.COMPLETED) {
+        ride.timestamps.completedAt = new Date();
+    }
+
+    ride.status = status;
+    await ride.save();
+
+    return ride.populate('driver', 'user');
+};
+
 export const RideService = {
     getAllRides,
     requestRide,
@@ -174,4 +223,5 @@ export const RideService = {
     cancelRideRider,
     acceptRide,
     rejectRide,
+    updateRideStatus,
 };
