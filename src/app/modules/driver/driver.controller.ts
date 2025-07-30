@@ -95,10 +95,29 @@ const toggleDriverSuspension = catchAsync(
     }
 );
 
+/**
+ * Toggle Driver Availability
+ */
+const toggleDriverAvailability = catchAsync(
+    async (req: Request, res: Response) => {
+        const userId = req.user.userId;
+        const isOnline = await DriverService.toggleDriverAvailability(userId);
+
+        sendResponse(res, {
+            statusCode: httpStatusCodes.OK,
+            message: `Driver set ${
+                isOnline ? 'online' : 'offline'
+            } successfully`,
+            data: { isOnline },
+        });
+    }
+);
+
 export const DriverController = {
     getAllDrivers,
     applyForDriver,
     approveDriver,
     rejectDriver,
     toggleDriverSuspension,
+    toggleDriverAvailability,
 };

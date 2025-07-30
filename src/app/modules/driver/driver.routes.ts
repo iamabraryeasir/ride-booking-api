@@ -48,4 +48,10 @@ router.patch(
     DriverController.toggleDriverSuspension
 );
 
+router.patch(
+    '/toggle-availability',
+    checkAuth(ROLE.DRIVER),
+    DriverController.toggleDriverAvailability
+);
+
 export const DriverRoutes = router;

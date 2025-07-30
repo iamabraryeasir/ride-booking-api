@@ -9,6 +9,8 @@ import httpStatusCodes from 'http-status-codes';
 import { AppError } from '../../errorHelpers/AppError';
 import { APPLICATION_STATUS, IDriver } from './driver.interface';
 import { Driver } from './driver.model';
+import { User } from '../user/user.model';
+import { ROLE } from '../user/user.interface';
 
 /**
  * Get All Drivers
@@ -57,12 +59,19 @@ const applyForDriver = async (payload: Partial<IDriver>) => {
 const approveDriver = async (driverId: string) => {
     const driver = await Driver.findById(driverId);
     if (!driver) {
-        throw new Error('Driver not found');
+        throw new AppError(httpStatusCodes.NOT_FOUND, 'Driver not found');
     }
 
     if (driver.applicationStatus !== APPLICATION_STATUS.PENDING) {
-        throw new Error('Driver application is not pending');
+        throw new AppError(
+            httpStatusCodes.BAD_REQUEST,
+            'Driver application is not pending'
+        );
     }
+
+    await User.findByIdAndUpdate(driver.user, {
+        role: ROLE.DRIVER,
+    });
 
     driver.applicationStatus = APPLICATION_STATUS.APPROVED;
     await driver.save();
@@ -104,10 +113,29 @@ const toggleDriverSuspension = async (driverId: string) => {
     return driver.isSuspended;
 };
 
+/**
+ * Toggle Driver Availability
+ */
+const toggleDriverAvailability = async (userId: string) => {
+    const driver = await Driver.findOne({ user: userId });
+    if (!driver) {
+        throw new AppError(httpStatusCodes.NOT_FOUND, 'Driver not found');
+    }
+
+    if (driver.applicationStatus !== APPLICATION_STATUS.APPROVED) {
+        throw new Error('Driver must be approved to toggle availability');
+    }
+
+    driver.isOnline = !driver.isOnline;
+    await driver.save();
+    return driver.isOnline;
+};
+
 export const DriverService = {
     getAllDrivers,
     applyForDriver,
     approveDriver,
     rejectDriver,
     toggleDriverSuspension,
+    toggleDriverAvailability,
 };
