@@ -24,6 +24,57 @@ const getAllRides = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
+/**
+ * Request Ride
+ */
+const requestRide = catchAsync(async (req: Request, res: Response) => {
+    const { userId } = req.user;
+    const rideData = req.body;
+
+    const ride = await RideService.requestRide(userId, rideData);
+
+    sendResponse(res, {
+        statusCode: httpStatusCodes.CREATED,
+        message: 'Ride requested successfully',
+        data: ride,
+    });
+});
+
+/**
+ * Get My Rides
+ */
+const getMyRides = catchAsync(async (req: Request, res: Response) => {
+    const { userId } = req.user;
+
+    const rides = await RideService.getMyRides(userId);
+
+    sendResponse(res, {
+        statusCode: httpStatusCodes.OK,
+        message: 'My rides fetched successfully',
+        data: rides,
+    });
+});
+
+/**
+ * Cancel Ride as Rider
+ */
+const cancelRideRider = catchAsync(async (req: Request, res: Response) => {
+    const { rideId } = req.params;
+    const { userId } = req.user;
+    const { cancelReason } = req.body;
+
+    const ride = await RideService.cancelRideRider(userId, rideId, cancelReason);
+
+    sendResponse(res, {
+        statusCode: httpStatusCodes.OK,
+        message: 'Ride cancelled successfully',
+        data: ride,
+    });
+});
+
 export const RideController = {
     getAllRides,
+    requestRide,
+    getMyRides,
+    cancelRideRider,
 };
