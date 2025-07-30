@@ -9,6 +9,7 @@ import httpStatusCodes from 'http-status-codes';
  */
 import { catchAsync } from '../../utils/catchAsync';
 import { DriverService } from './driver.service';
+import { sendResponse } from '../../utils/sendResponse';
 
 /**
  * Get All Drivers
@@ -16,8 +17,9 @@ import { DriverService } from './driver.service';
 const getAllDrivers = catchAsync(async (req: Request, res: Response) => {
     const drivers = await DriverService.getAllDrivers();
 
-    res.status(httpStatusCodes.OK).json({
-        success: true,
+    sendResponse(res, {
+        statusCode: httpStatusCodes.OK,
+        message: 'Drivers fetched successfully',
         data: drivers,
     });
 });
