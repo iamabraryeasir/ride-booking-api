@@ -1,6 +1,6 @@
 import { Types } from 'mongoose';
 
-export enum RideStatus {
+export enum RIDE_STATUS {
     REQUESTED = 'REQUESTED',
     ACCEPTED = 'ACCEPTED',
     PICKED_UP = 'PICKED_UP',
@@ -14,7 +14,7 @@ export interface IRide extends Document {
     driver: Types.ObjectId | null;
     pickupAddress: string;
     destinationAddress: string;
-    status: RideStatus;
+    status: RIDE_STATUS;
     price: number;
     timestamps: {
         requestedAt: Date;
