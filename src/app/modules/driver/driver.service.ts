@@ -25,7 +25,7 @@ const getAllDrivers = async (query: Record<string, string>) => {
         .filter()
         .search(driverSearchableFields)
         .sort()
-        .fields('-isDeleted -password')
+        .fields()
         .paginate();
 
     const [data, meta] = await Promise.all([

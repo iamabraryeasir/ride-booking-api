@@ -15,7 +15,10 @@ import { RideService } from './ride.service';
  * Get All Rides
  */
 const getAllRides = catchAsync(async (req: Request, res: Response) => {
-    const rides = await RideService.getAllRides();
+    const query = req.query;
+    const rides = await RideService.getAllRides(
+        query as Record<string, string>
+    );
 
     sendResponse(res, {
         statusCode: httpStatusCodes.OK,

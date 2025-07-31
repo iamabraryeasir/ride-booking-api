@@ -21,7 +21,7 @@ import {
  */
 const router = Router();
 
-router.get('/', checkAuth(ROLE.ADMIN), RideController.getAllRides);
+router.get('/', checkAuth(...Object.values(ROLE)), RideController.getAllRides);
 
 router.post(
     '/request',

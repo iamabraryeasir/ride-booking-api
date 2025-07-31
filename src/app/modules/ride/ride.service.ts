@@ -11,16 +11,30 @@ import { User } from '../user/user.model';
 import { AppError } from '../../errorHelpers/AppError';
 import { RIDE_STATUS } from './ride.interface';
 import { Driver } from '../driver/driver.model';
+import { QueryBuilder } from '../../utils/QueryBuilder';
+import { rideSearchableFields } from './ride.contant';
 
 /**
  * Get All Rides
  */
-const getAllRides = async () => {
-    const rides = await Ride.find({})
-        .populate('rider', 'name email')
-        .populate('driver', 'user');
+const getAllRides = async (query: Record<string, string>) => {
+    const queryBuilder = new QueryBuilder(Ride.find(), query);
+    const driversData = queryBuilder
+        .filter()
+        .search(rideSearchableFields)
+        .sort()
+        .fields()
+        .paginate();
 
-    return rides;
+    const [data, meta] = await Promise.all([
+        driversData.build(),
+        queryBuilder.getMeta(),
+    ]);
+
+    return {
+        data,
+        meta,
+    };
 };
 
 /**
