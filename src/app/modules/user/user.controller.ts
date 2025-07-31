@@ -54,12 +54,16 @@ const toggleUserBlock = catchAsync(
  */
 const getAllUsers = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
-        const users = await UserServices.getAllUsers();
+        const query = req.query;
+        const result = await UserServices.getAllUsers(
+            query as Record<string, string>
+        );
 
         sendResponse(res, {
             statusCode: httpStatusCodes.OK,
             message: 'Users retrieved successfully',
-            data: users,
+            data: result.data,
+            meta: result.meta,
         });
     }
 );

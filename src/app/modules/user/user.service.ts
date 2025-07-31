@@ -11,6 +11,8 @@ import { AppError } from '../../errorHelpers/AppError';
 import { IUser } from './user.interface';
 import { User } from './user.model';
 import config from '../../config';
+import { QueryBuilder } from '../../utils/QueryBuilder';
+import { userSearchableFields } from './user.constant';
 
 /**
  * Register New User
@@ -55,13 +57,24 @@ const toggleUserBlock = async (userId: string) => {
 /**
  * Get All Users
  */
-const getAllUsers = async () => {
-    const users = await User.find({}).select('-password');
-    if (!users.length) {
-        throw new AppError(httpStatusCodes.NOT_FOUND, 'No users found');
-    }
+const getAllUsers = async (query: Record<string, string>) => {
+    const queryBuilder = new QueryBuilder(User.find(), query);
+    const usersData = queryBuilder
+        .filter()
+        .search(userSearchableFields)
+        .sort()
+        .fields('-isDeleted -password')
+        .paginate();
 
-    return users;
+    const [data, meta] = await Promise.all([
+        usersData.build(),
+        queryBuilder.getMeta(),
+    ]);
+
+    return {
+        data,
+        meta,
+    };
 };
 
 export const UserServices = { registerUser, toggleUserBlock, getAllUsers };
