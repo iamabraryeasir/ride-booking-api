@@ -13,13 +13,30 @@ import { User } from '../user/user.model';
 import { ROLE } from '../user/user.interface';
 import { Ride } from '../ride/ride.model';
 import { RIDE_STATUS } from '../ride/ride.interface';
+import { QueryBuilder } from '../../utils/QueryBuilder';
+import { driverSearchableFields } from './driver.constant';
 
 /**
  * Get All Drivers
  */
-const getAllDrivers = async () => {
-    const drivers = await Driver.find({}).populate('user', 'name email phone');
-    return drivers;
+const getAllDrivers = async (query: Record<string, string>) => {
+    const queryBuilder = new QueryBuilder(Driver.find(), query);
+    const driversData = queryBuilder
+        .filter()
+        .search(driverSearchableFields)
+        .sort()
+        .fields('-isDeleted -password')
+        .paginate();
+
+    const [data, meta] = await Promise.all([
+        driversData.build(),
+        queryBuilder.getMeta(),
+    ]);
+
+    return {
+        data,
+        meta,
+    };
 };
 
 /**

@@ -15,12 +15,16 @@ import { sendResponse } from '../../utils/sendResponse';
  * Get All Drivers
  */
 const getAllDrivers = catchAsync(async (req: Request, res: Response) => {
-    const drivers = await DriverService.getAllDrivers();
+    const query = req.query;
+    const result = await DriverService.getAllDrivers(
+        query as Record<string, string>
+    );
 
     sendResponse(res, {
         statusCode: httpStatusCodes.OK,
         message: 'Drivers fetched successfully',
-        data: drivers,
+        data: result.data,
+        meta: result.meta,
     });
 });
 
