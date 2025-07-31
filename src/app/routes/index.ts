@@ -11,6 +11,7 @@ import { UserRoutes } from '../modules/user/user.routes';
 import { AuthRoutes } from '../modules/auth/auth.routes';
 import { DriverRoutes } from '../modules/driver/driver.routes';
 import { RideRoutes } from '../modules/ride/ride.routes';
+import { ReportRoutes } from '../modules/report/report.router';
 
 /**
  * Types
@@ -41,6 +42,10 @@ const moduleRoutes: IModuleRoutes[] = [
     {
         path: '/rides',
         route: RideRoutes,
+    },
+    {
+        path: '/reports',
+        route: ReportRoutes,
     },
 ];
 
