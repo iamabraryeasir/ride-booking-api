@@ -22,9 +22,11 @@ import { IErrorSources } from '../interfaces/error.types';
  * Middleware Logic
  */
 export const globalErrorHandler = async (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     error: any,
     req: Request,
     res: Response,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     next: NextFunction
 ) => {
     let statusCode = 500;

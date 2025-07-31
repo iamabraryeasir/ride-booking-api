@@ -32,8 +32,11 @@ const loginUser = async (payload: Partial<IUser>) => {
     const userTokens = createUserTokens(isUserExist);
 
     const {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         password: pass,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         isDeleted,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         isBlocked,
         ...rest
     } = isUserExist.toObject();

@@ -40,6 +40,7 @@ const getAllRides = async (query: Record<string, string>) => {
 /**
  * Request Ride
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const requestRide = async (userId: string, rideData: any) => {
     const rider = await User.findById(userId);
     if (!rider) {
