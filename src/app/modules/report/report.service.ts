@@ -103,6 +103,206 @@ const getAllReports = async (fromDate: Date, toDate: Date) => {
     };
 };
 
+/**
+ * Get Daily Analytics
+ */
+const getDailyAnalytics = async (days: number = 7) => {
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - days);
+
+    const dailyData = await Ride.aggregate([
+        {
+            $match: {
+                createdAt: { $gte: startDate },
+            },
+        },
+        {
+            $group: {
+                _id: {
+                    year: { $year: '$createdAt' },
+                    month: { $month: '$createdAt' },
+                    day: { $dayOfMonth: '$createdAt' },
+                },
+                totalRides: { $sum: 1 },
+                completedRides: {
+                    $sum: { $cond: [{ $eq: ['$status', 'COMPLETED'] }, 1, 0] },
+                },
+                cancelledRides: {
+                    $sum: { $cond: [{ $eq: ['$status', 'CANCELLED'] }, 1, 0] },
+                },
+                totalRevenue: {
+                    $sum: { $cond: [{ $eq: ['$status', 'COMPLETED'] }, '$price', 0] },
+                },
+            },
+        },
+        {
+            $sort: { '_id.year': 1, '_id.month': 1, '_id.day': 1 },
+        },
+    ]);
+
+    return dailyData;
+};
+
+/**
+ * Get Monthly Analytics
+ */
+const getMonthlyAnalytics = async (months: number = 6) => {
+    const startDate = new Date();
+    startDate.setMonth(startDate.getMonth() - months);
+
+    const monthlyData = await Ride.aggregate([
+        {
+            $match: {
+                createdAt: { $gte: startDate },
+            },
+        },
+        {
+            $group: {
+                _id: {
+                    year: { $year: '$createdAt' },
+                    month: { $month: '$createdAt' },
+                },
+                totalRides: { $sum: 1 },
+                completedRides: {
+                    $sum: { $cond: [{ $eq: ['$status', 'COMPLETED'] }, 1, 0] },
+                },
+                totalRevenue: {
+                    $sum: { $cond: [{ $eq: ['$status', 'COMPLETED'] }, '$price', 0] },
+                },
+            },
+        },
+        {
+            $sort: { '_id.year': 1, '_id.month': 1 },
+        },
+    ]);
+
+    return monthlyData;
+};
+
+/**
+ * Get Driver Activity Analytics
+ */
+const getDriverActivityAnalytics = async () => {
+    const driverStats = await Driver.aggregate([
+        {
+            $lookup: {
+                from: 'rides',
+                localField: '_id',
+                foreignField: 'driver',
+                as: 'rides',
+            },
+        },
+        {
+            $project: {
+                _id: 1,
+                user: 1,
+                isOnline: 1,
+                isSuspended: 1,
+                applicationStatus: 1,
+                totalRides: { $size: '$rides' },
+                completedRides: {
+                    $size: {
+                        $filter: {
+                            input: '$rides',
+                            cond: { $eq: ['$$this.status', 'COMPLETED'] },
+                        },
+                    },
+                },
+                earnings: {
+                    $sum: {
+                        $map: {
+                            input: {
+                                $filter: {
+                                    input: '$rides',
+                                    cond: { $eq: ['$$this.status', 'COMPLETED'] },
+                                },
+                            },
+                            as: 'ride',
+                            in: '$$ride.price',
+                        },
+                    },
+                },
+            },
+        },
+        {
+            $lookup: {
+                from: 'users',
+                localField: 'user',
+                foreignField: '_id',
+                as: 'userInfo',
+            },
+        },
+        {
+            $project: {
+                _id: 1,
+                name: { $first: '$userInfo.name' },
+                email: { $first: '$userInfo.email' },
+                isOnline: 1,
+                isSuspended: 1,
+                applicationStatus: 1,
+                totalRides: 1,
+                completedRides: 1,
+                earnings: 1,
+            },
+        },
+        {
+            $sort: { earnings: -1 },
+        },
+    ]);
+
+    return driverStats;
+};
+
+/**
+ * Get Revenue Trends
+ */
+const getRevenueTrends = async () => {
+    const last30Days = new Date();
+    last30Days.setDate(last30Days.getDate() - 30);
+
+    const revenueTrends = await Ride.aggregate([
+        {
+            $match: {
+                status: 'COMPLETED',
+                'timestamps.completedAt': { $gte: last30Days },
+            },
+        },
+        {
+            $group: {
+                _id: {
+                    year: { $year: '$timestamps.completedAt' },
+                    month: { $month: '$timestamps.completedAt' },
+                    day: { $dayOfMonth: '$timestamps.completedAt' },
+                },
+                dailyRevenue: { $sum: '$price' },
+                rideCount: { $sum: 1 },
+            },
+        },
+        {
+            $sort: { '_id.year': 1, '_id.month': 1, '_id.day': 1 },
+        },
+        {
+            $project: {
+                date: {
+                    $dateFromParts: {
+                        year: '$_id.year',
+                        month: '$_id.month',
+                        day: '$_id.day',
+                    },
+                },
+                dailyRevenue: 1,
+                rideCount: 1,
+            },
+        },
+    ]);
+
+    return revenueTrends;
+};
+
 export const ReportService = {
     getAllReports,
+    getDailyAnalytics,
+    getMonthlyAnalytics,
+    getDriverActivityAnalytics,
+    getRevenueTrends,
 };

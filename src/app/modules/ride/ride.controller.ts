@@ -129,6 +129,52 @@ const updateRideStatus = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
+/**
+ * Get Ride Detail
+ */
+const getRideDetail = catchAsync(async (req: Request, res: Response) => {
+    const { rideId } = req.params;
+    const { userId, role } = req.user;
+
+    const ride = await RideService.getRideDetail(rideId, userId, role);
+
+    sendResponse(res, {
+        statusCode: httpStatusCodes.OK,
+        message: 'Ride details fetched successfully',
+        data: ride,
+    });
+});
+
+/**
+ * Get Incoming Ride Requests for Drivers
+ */
+const getIncomingRideRequests = catchAsync(async (req: Request, res: Response) => {
+    const { userId } = req.user;
+
+    const rides = await RideService.getIncomingRideRequests(userId);
+
+    sendResponse(res, {
+        statusCode: httpStatusCodes.OK,
+        message: 'Incoming ride requests fetched successfully',
+        data: rides,
+    });
+});
+
+/**
+ * Estimate Fare
+ */
+const estimateFare = catchAsync(async (req: Request, res: Response) => {
+    const { pickupAddress, destinationAddress } = req.body;
+
+    const fareEstimation = await RideService.estimateFare(pickupAddress, destinationAddress);
+
+    sendResponse(res, {
+        statusCode: httpStatusCodes.OK,
+        message: 'Fare estimated successfully',
+        data: fareEstimation,
+    });
+});
+
 export const RideController = {
     getAllRides,
     requestRide,
@@ -137,4 +183,7 @@ export const RideController = {
     acceptRide,
     rejectRide,
     updateRideStatus,
+    getRideDetail,
+    getIncomingRideRequests,
+    estimateFare,
 };

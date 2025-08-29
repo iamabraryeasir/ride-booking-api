@@ -14,3 +14,8 @@ export const rideCancelZodValidator = z.object({
 export const updateRideStatusZodValidator = z.object({
     status: z.enum(Object.values(RIDE_STATUS)),
 });
+
+export const fareEstimationZodValidator = z.object({
+    pickupAddress: z.string().min(1, 'Pickup address is required'),
+    destinationAddress: z.string().min(1, 'Destination address is required'),
+});

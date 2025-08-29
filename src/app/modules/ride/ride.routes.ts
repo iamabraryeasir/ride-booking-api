@@ -14,6 +14,7 @@ import {
     rideCancelZodValidator,
     rideRequestZodValidator,
     updateRideStatusZodValidator,
+    fareEstimationZodValidator,
 } from './ride.validator';
 
 /**
@@ -31,6 +32,15 @@ router.post(
 );
 
 router.get('/my-rides', checkAuth(ROLE.RIDER), RideController.getMyRides);
+
+router.get('/incoming', checkAuth(ROLE.DRIVER), RideController.getIncomingRideRequests);
+
+router.post(
+    '/estimate-fare',
+    checkAuth(ROLE.RIDER),
+    validateRequest(fareEstimationZodValidator),
+    RideController.estimateFare
+);
 
 router.patch(
     '/cancel/:rideId',
@@ -56,6 +66,12 @@ router.patch(
     checkAuth(ROLE.DRIVER),
     validateRequest(updateRideStatusZodValidator),
     RideController.updateRideStatus
+);
+
+router.get(
+    '/:rideId',
+    checkAuth(...Object.values(ROLE)),
+    RideController.getRideDetail
 );
 
 export const RideRoutes = router;

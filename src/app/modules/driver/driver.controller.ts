@@ -131,6 +131,26 @@ const getDriverEarnings = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
+/**
+ * Get Driver Ride History
+ */
+const getDriverRideHistory = catchAsync(async (req: Request, res: Response) => {
+    const { userId } = req.user;
+    const query = req.query;
+    
+    const result = await DriverService.getDriverRideHistory(
+        userId,
+        query as Record<string, string>
+    );
+
+    sendResponse(res, {
+        statusCode: httpStatusCodes.OK,
+        message: 'Driver ride history fetched successfully',
+        data: result.data,
+        meta: result.meta,
+    });
+});
+
 export const DriverController = {
     getAllDrivers,
     applyForDriver,
@@ -139,4 +159,5 @@ export const DriverController = {
     toggleDriverSuspension,
     toggleDriverAvailability,
     getDriverEarnings,
+    getDriverRideHistory,
 };

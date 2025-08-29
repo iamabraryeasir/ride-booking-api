@@ -84,7 +84,11 @@ Here’s a fully checked list of your API endpoints, organized by module and pre
 | Method | Endpoint                            | Description                             | Auth  |
 | ------ | ----------------------------------- | --------------------------------------- | ----- |
 | GET    | `/reports`                          | Get system summary report               | Admin |
-| GET    | `/users`                            | List all users (with filters)           | Admin |
+| GET    | `/reports/daily-analytics`          | Get daily analytics (last 7 days)      | Admin |
+| GET    | `/reports/monthly-analytics`        | Get monthly analytics (last 6 months)  | Admin |
+| GET    | `/reports/driver-activity`          | Get driver activity statistics          | Admin |
+| GET    | `/reports/revenue-trends`           | Get revenue trends (last 30 days)      | Admin |
+| GET    | `/users`                            | List all users (with filters)          | Admin |
 | GET    | `/drivers`                          | List all drivers                        | Admin |
 | GET    | `/rides`                            | List all rides                          | Admin |
 | PATCH  | `/drivers/approve/:driverId`        | Approve driver application              | Admin |
@@ -98,21 +102,70 @@ Here’s a fully checked list of your API endpoints, organized by module and pre
 | POST   | `/drivers/apply`               | Apply to become a driver     | Rider  |
 | PATCH  | `/drivers/toggle-availability` | Toggle online/offline status | Driver |
 | GET    | `/drivers/earnings`            | View earnings history        | Driver |
+| GET    | `/drivers/my-rides`            | Get driver ride history      | Driver |
 
 #### 📦 Ride Control (Driver)
 
 | Method | Endpoint                | Description                            | Auth   |
 | ------ | ----------------------- | -------------------------------------- | ------ |
+| GET    | `/rides/incoming`       | Get available ride requests            | Driver |
 | PATCH  | `/rides/accept/:rideId` | Accept a pending ride                  | Driver |
 | PATCH  | `/rides/reject/:rideId` | Reject a pending ride (body: `reason`) | Driver |
+| PATCH  | `/rides/update-ride-status/:rideId` | Update ride status (PICKED_UP, IN_TRANSIT, COMPLETED) | Driver |
 
 #### 🧍 Rider Routes
 
 | Method | Endpoint                     | Description                          | Auth  |
 | ------ | ---------------------------- | ------------------------------------ | ----- |
 | POST   | `/rides/request`             | Request a new ride                   | Rider |
-| PATCH  | `/rides/cancel-ride/:rideId` | Cancel a ride (body: `cancelReason`) | Rider |
+| POST   | `/rides/estimate-fare`       | Estimate ride fare                   | Rider |
+| PATCH  | `/rides/cancel/:rideId`      | Cancel a ride (body: `cancelReason`) | Rider |
 | GET    | `/rides/my-rides`            | View your ride history               | Rider |
+| GET    | `/rides/:rideId`             | Get detailed ride information        | All   |
+
+#### 👤 Profile Management (All Users)
+
+| Method | Endpoint                | Description                  | Auth |
+| ------ | ----------------------- | ---------------------------- | ---- |
+| GET    | `/users/profile`        | Get user profile             | All  |
+| PATCH  | `/users/profile`        | Update user profile          | All  |
+| PATCH  | `/users/change-password`| Change user password         | All  |
+
+#### 💳 Payment Methods (Riders)
+
+| Method | Endpoint                        | Description                    | Auth  |
+| ------ | ------------------------------- | ------------------------------ | ----- |
+| GET    | `/payment-methods`              | Get user payment methods       | Rider |
+| POST   | `/payment-methods`              | Add new payment method         | Rider |
+| PATCH  | `/payment-methods/:methodId`    | Update payment method          | Rider |
+| DELETE | `/payment-methods/:methodId`    | Delete payment method          | Rider |
+
+#### 🚨 Emergency Contacts (All Users)
+
+| Method | Endpoint                         | Description                    | Auth |
+| ------ | -------------------------------- | ------------------------------ | ---- |
+| GET    | `/emergency-contacts`            | Get emergency contacts         | All  |
+| POST   | `/emergency-contacts`            | Add emergency contact          | All  |
+| PATCH  | `/emergency-contacts/:contactId` | Update emergency contact       | All  |
+| DELETE | `/emergency-contacts/:contactId` | Delete emergency contact       | All  |
+
+#### ⭐ Rating & Feedback System
+
+| Method | Endpoint                   | Description                      | Auth         |
+| ------ | -------------------------- | -------------------------------- | ------------ |
+| GET    | `/ratings`                 | Get user ratings (given/received)| All          |
+| POST   | `/ratings/ride/:rideId`    | Rate a completed ride            | Rider/Driver |
+| PATCH  | `/ratings/:ratingId`       | Update rating                    | Rider/Driver |
+| DELETE | `/ratings/:ratingId`       | Delete rating                    | Rider/Driver |
+| GET    | `/ratings/average/:userId` | Get user average rating          | All          |
+
+#### ⚙️ User Settings & Preferences
+
+| Method | Endpoint           | Description                  | Auth |
+| ------ | ------------------ | ---------------------------- | ---- |
+| GET    | `/settings`        | Get user settings            | All  |
+| PATCH  | `/settings`        | Update user settings         | All  |
+| POST   | `/settings/reset`  | Reset settings to default    | All  |
 
 #### 🔧 Misc
 

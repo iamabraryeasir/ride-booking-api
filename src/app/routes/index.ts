@@ -12,6 +12,10 @@ import { AuthRoutes } from '../modules/auth/auth.routes';
 import { DriverRoutes } from '../modules/driver/driver.routes';
 import { RideRoutes } from '../modules/ride/ride.routes';
 import { ReportRoutes } from '../modules/report/report.router';
+import { PaymentRoutes } from '../modules/payment/payment.routes';
+import { EmergencyRoutes } from '../modules/emergency/emergency.routes';
+import { RatingRoutes } from '../modules/rating/rating.routes';
+import { SettingsRoutes } from '../modules/settings/settings.routes';
 
 /**
  * Types
@@ -46,6 +50,22 @@ const moduleRoutes: IModuleRoutes[] = [
     {
         path: '/reports',
         route: ReportRoutes,
+    },
+    {
+        path: '/payment-methods',
+        route: PaymentRoutes,
+    },
+    {
+        path: '/emergency-contacts',
+        route: EmergencyRoutes,
+    },
+    {
+        path: '/ratings',
+        route: RatingRoutes,
+    },
+    {
+        path: '/settings',
+        route: SettingsRoutes,
     },
 ];
 

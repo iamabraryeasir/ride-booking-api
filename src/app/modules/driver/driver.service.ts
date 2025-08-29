@@ -173,6 +173,44 @@ const getDriverEarnings = async (userId: string) => {
     return { rides, totalEarnings };
 };
 
+/**
+ * Get Driver Ride History
+ */
+const getDriverRideHistory = async (userId: string, query: Record<string, string>) => {
+    const driver = await Driver.findOne({ user: userId });
+    if (!driver) {
+        throw new AppError(httpStatusCodes.NOT_FOUND, 'Driver not found');
+    }
+
+    if (driver.applicationStatus !== APPLICATION_STATUS.APPROVED) {
+        throw new AppError(
+            httpStatusCodes.FORBIDDEN,
+            'Driver must be approved to view ride history'
+        );
+    }
+
+    const queryBuilder = new QueryBuilder(
+        Ride.find({ driver: driver._id }),
+        query
+    );
+    
+    const ridesData = queryBuilder
+        .filter()
+        .sort()
+        .fields()
+        .paginate();
+
+    const [data, meta] = await Promise.all([
+        ridesData.build().populate('rider', 'name email phone picture'),
+        queryBuilder.getMeta(),
+    ]);
+
+    return {
+        data,
+        meta,
+    };
+};
+
 export const DriverService = {
     getAllDrivers,
     applyForDriver,
@@ -181,4 +219,5 @@ export const DriverService = {
     toggleDriverSuspension,
     toggleDriverAvailability,
     getDriverEarnings,
+    getDriverRideHistory,
 };

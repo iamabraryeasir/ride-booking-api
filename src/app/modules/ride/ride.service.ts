@@ -223,12 +223,114 @@ const updateRideStatus = async (
         ride.timestamps.pickedUpAt = new Date();
     } else if (status === RIDE_STATUS.COMPLETED) {
         ride.timestamps.completedAt = new Date();
+        
+        // Update driver earnings when ride is completed
+        const driver = await Driver.findById(ride.driver);
+        if (driver) {
+            driver.earnings = (driver.earnings || 0) + ride.price;
+            await driver.save();
+        }
     }
 
     ride.status = status;
     await ride.save();
 
     return ride.populate('driver', 'user');
+};
+
+/**
+ * Get Ride Detail
+ */
+const getRideDetail = async (rideId: string, userId: string, userRole: string) => {
+    const ride = await Ride.findById(rideId)
+        .populate('rider', 'name email phone picture')
+        .populate({
+            path: 'driver',
+            populate: {
+                path: 'user',
+                select: 'name email phone picture'
+            }
+        });
+
+    if (!ride) {
+        throw new AppError(httpStatusCodes.NOT_FOUND, 'Ride not found');
+    }
+
+    // Authorization check - users can only view their own rides unless they're admin
+    if (userRole !== 'ADMIN') {
+        const isRider = (ride.rider as any)._id.toString() === userId;
+        const isDriver = ride.driver && (ride.driver as any).user && (ride.driver as any).user._id.toString() === userId;
+        
+        if (!isRider && !isDriver) {
+            throw new AppError(httpStatusCodes.FORBIDDEN, 'You can only view your own rides');
+        }
+    }
+
+    return ride;
+};
+
+/**
+ * Get Incoming Ride Requests for Drivers
+ */
+const getIncomingRideRequests = async (userId: string) => {
+    const driver = await Driver.findOne({ user: userId });
+    if (!driver) {
+        throw new AppError(httpStatusCodes.NOT_FOUND, 'Driver not found');
+    }
+
+    if (!driver.isOnline) {
+        throw new AppError(
+            httpStatusCodes.BAD_REQUEST,
+            'Driver must be online to view incoming requests'
+        );
+    }
+
+    if (driver.isSuspended) {
+        throw new AppError(
+            httpStatusCodes.FORBIDDEN,
+            'Driver is suspended and cannot view incoming requests'
+        );
+    }
+
+    // Get rides that are requested and not rejected by this driver
+    const rides = await Ride.find({
+        status: RIDE_STATUS.REQUESTED,
+        'rejectionDriverList.driverId': { $ne: driver._id },
+    })
+        .populate('rider', 'name email phone picture')
+        .sort({ 'timestamps.requestedAt': -1 });
+
+    return rides;
+};
+
+/**
+ * Estimate Fare
+ */
+const estimateFare = async (pickupAddress: string, destinationAddress: string) => {
+    // Simple fare calculation based on address strings
+    // In production, you would use actual map APIs like Google Maps or Mapbox
+    const baseRate = 50; // Base fare in BDT
+    const perKmRate = 15; // Rate per kilometer
+    
+    // Simulate distance calculation based on address complexity
+    // This is a simplified approach - in production you'd use GPS coordinates
+    const estimatedDistance = Math.max(
+        Math.abs(pickupAddress.length - destinationAddress.length) * 0.1,
+        2
+    ); // Minimum 2km
+    
+    const estimatedFare = baseRate + (estimatedDistance * perKmRate);
+    
+    return {
+        estimatedFare: Math.round(estimatedFare),
+        estimatedDistance: Math.round(estimatedDistance * 10) / 10,
+        estimatedDuration: Math.round(estimatedDistance * 3), // Assume 3 minutes per km
+        breakdown: {
+            baseFare: baseRate,
+            distanceFare: Math.round(estimatedDistance * perKmRate),
+            totalFare: Math.round(estimatedFare)
+        }
+    };
 };
 
 export const RideService = {
@@ -239,4 +341,7 @@ export const RideService = {
     acceptRide,
     rejectRide,
     updateRideStatus,
+    getRideDetail,
+    getIncomingRideRequests,
+    estimateFare,
 };
