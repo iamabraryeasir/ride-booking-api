@@ -15,6 +15,14 @@ import { AppRouter } from './app/routes';
 
 const app = express();
 
+// CORS configuration
+app.use(
+    cors({
+        origin: config.FRONTEND_URL,
+        credentials: true,
+    })
+);
+
 /**
  * CORS Setup
  */
